@@ -3,7 +3,7 @@
 
 
 from core import ID3, AmazonSource
-from log import logger, logging
+from log import logging
 
 import os
 import requests_cache

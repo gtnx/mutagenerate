@@ -5,7 +5,7 @@ from log import logger
 import requests
 from bs4 import BeautifulSoup
 import urllib
-from mutagen.id3 import ID3, TALB, APIC, WXXX, TCON
+from mutagen.id3 import TALB, APIC, WXXX, TCON
 
 
 class Source(object):
@@ -13,7 +13,6 @@ class Source(object):
         logger.info("Generating dummy sources for %s" % id3.pprint().replace("\n", ", "))
         self._generate(id3)
         logger.info("Generated dummy sources for %s" % id3.pprint().replace("\n", ", "))
-
 
     def generate_and_save(self, id3):
         self.generate(id3)
@@ -56,14 +55,3 @@ class AmazonSource(Source):
                         id3.add(TCON(encoding=3, text=g))
         else:
             logger.warning("No results for %(kw)s" % locals())
-
-
-if __name__ == "__main__":
-    import os
-    requests_cache.install_cache("/tmp/cache")
-    directory = "/tmp/music"
-    # id3s = [ID3(os.path.join(directory, fn)) for fn in filter(lambda x: x.endswith(".mp3"), os.listdir(directory))]
-    id3s = [ID3(os.path.join(directory, fn)) for fn in filter(lambda x: x.endswith(".mp3") and x.startswith("Bad"), os.listdir(directory))]
-    for id3 in id3s:
-        AmazonSource().generate(id3)
-        id3.save()
