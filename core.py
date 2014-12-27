@@ -5,7 +5,7 @@ from log import logger
 import requests
 from bs4 import BeautifulSoup
 import urllib
-from mutagen.id3 import TALB, APIC, WXXX, TCON
+from mutagen.id3 import ID3, TALB, APIC, WXXX, TCON
 
 
 class Source(object):
@@ -30,7 +30,7 @@ class AmazonSource(Source):
 
     def _generate(self, id3):
         kw = "%s %s" % (id3["TPE1"].text[0], id3["TIT2"].text[0])
-        url = self.url.replace("KEYWORD", urllib.quote_plus(kw))
+        url = self.url.replace("KEYWORD", urllib.quote_plus(kw.encode("utf8")))
         logger.debug("Crawling %(url)s" % locals())
         response = requests.get(url)
         soup = BeautifulSoup(response.content)
