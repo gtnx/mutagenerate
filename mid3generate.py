@@ -16,6 +16,8 @@ parser = OptionParser()
 parser.add_option("", "--directory", dest="directory", default="", help="Directory")
 parser.add_option("", "--filename", dest="filename", default="", help="filename")
 parser.add_option("", "--cache", dest="cache", default="", help="cache")
+parser.add_option("", "--update", dest="update", default=False, action="store_true", help="Update existing frames")
+parser.add_option("", "--yes", dest="yes", default=False, action="store_true", help="Say yes to saving")
 options, args = parser.parse_args()
 
 
@@ -28,4 +30,4 @@ if __name__ == "__main__":
         id3s.append(ID3(options.filename))
 
     for id3 in id3s:
-        AmazonSource().generate_and_save(id3)
+        AmazonSource().generate_and_save(id3, options.update, options.yes)
