@@ -20,4 +20,14 @@ The package queries Amazon and then gather the following info:
 
 ## Usage
 
-`mid3generate.py --filename "My Song.mp3"`
+### Using binary
+
+    mid3generate.py --filename "My Song.mp3"`
+
+### Using library
+    
+    from mutagen.id3 import ID3
+    from mutagenerate.core import AmazonSource
+
+    mp3 = ID3("My Song.mp3")
+    AmazonSource().generate_and_save(mp3, update=False, yes=True)
