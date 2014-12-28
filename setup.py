@@ -2,7 +2,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(name='mutagenerate',
-      version='0.1.0',
+      version='0.1.1',
       author='Guillaume Thomas',
       author_email='guillaume.thomas642@gmail.com',
       license='LICENCE.txt',
