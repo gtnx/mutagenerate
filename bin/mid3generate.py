@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 
-from core import ID3, AmazonSource
-from log import logging
+from mutagenerate.core import ID3, AmazonSource
+from mutagenerate.log import logging, logger
 
 import os
-import requests_cache
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -22,7 +21,12 @@ options, args = parser.parse_args()
 
 
 if __name__ == "__main__":
-    requests_cache.install_cache(options.cache)
+    if options.cache:
+        try:
+            import requests_cache
+            requests_cache.install_cache(options.cache)
+        except ImportError as e:
+            logger.warning("Cannot set cache, install requests_cache first")
     id3s = []
     if options.directory:
         id3s.extend([ID3(os.path.join(options.directory, fn)) for fn in filter(lambda x: x.endswith(".mp3"), os.listdir(options.directory))])
