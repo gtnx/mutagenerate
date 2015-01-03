@@ -37,7 +37,7 @@ Using binary
 
 ::
 
-    mid3generate.py --filename "My Song.mp3"`
+    mid3generate.py --filename "My Song.mp3"
 
 Using library
 ~~~~~~~~~~~~~
