@@ -6,7 +6,7 @@ from util import query_yes_no
 import requests
 from bs4 import BeautifulSoup
 import urllib
-from mutagen.id3 import ID3, TALB, APIC, WXXX, TCON
+from mutagen.id3 import TALB, APIC, WXXX, TCON
 
 
 class Source(object):
