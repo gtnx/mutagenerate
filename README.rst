@@ -1,5 +1,10 @@
+============
 mutagenerate
 ============
+
+.. image:: https://travis-ci.org/gtnx/mutagenerate.svg?branch=master
+    :target: https://travis-ci.org/gtnx/mutagenerate
+
 
 Expanding automatically id3 tags using available web resources (Amazon
 for instance). Based on mutagen.
