@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name='mutagenerate',
-    version='0.1.5',
+    version='0.1.6',
     author='Guillaume Thomas',
     author_email='guillaume.thomas642@gmail.com',
     license='LICENCE.txt',

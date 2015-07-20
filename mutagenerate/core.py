@@ -26,11 +26,12 @@ class AmazonSource(Source):
         self.url = """http://www.amazon.fr/s/ref=nb_sb_noss?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&url=search-alias%3Ddigital-music&field-keywords=KEYWORD&rh=n%3A77196031%2Ck%3AKEYWORD&ajr=0"""
 
     def _generate(self, id3, update=False):
+        print('here')
         kw = "%s %s" % (id3["TPE1"].text[0], id3["TIT2"].text[0])
         url = self.url.replace("KEYWORD", urllib.quote_plus(kw.encode("utf8")))
         logger.debug("Crawling %(url)s" % locals())
         response = requests.get(url)
-        soup = BeautifulSoup(response.content)
+        soup = BeautifulSoup(response.content, 'lxml')
         results = soup.select("table.mp3Tracks tr td.songTitle a")
         if not results:
             logger.warning("No results for %(kw)s" % locals())
@@ -38,12 +39,12 @@ class AmazonSource(Source):
         result = results[0]
         url = result.get("href")
         logger.debug("Found specific url: %(url)s" % locals())
-        soup = BeautifulSoup(requests.get(url).content)
+        soup = BeautifulSoup(requests.get(url).content, 'lxml')
         id3.add(WXXX(encoding=3, desc=u"Amazon url", url=url))
         album = soup.select("#fromAlbum a")
         if album and (update or "TALB" not in id3):
             id3.add(TALB(encoding=3, text=album[0].find(text=True).strip(" \n")))
-        images = soup.select("div#coverArt_feature_div img")
+        images = soup.select("div#coverArt_feature_div img") + soup.select('#prodImageContainer img')
         if images and (update or "APIC" not in id3):
             data = requests.get(images[0].get("src")).content
             id3.add(APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=data))

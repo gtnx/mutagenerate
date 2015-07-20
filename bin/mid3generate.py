@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
-from mutagenerate.core import ID3, AmazonSource
+from mutagen.id3 import ID3
+from mutagenerate.core import AmazonSource
 from mutagenerate.log import logging, logger
 
 import os
