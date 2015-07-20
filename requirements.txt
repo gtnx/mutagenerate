@@ -4,3 +4,4 @@ mutagen
 coverage
 coveralls
 nose
+lxml
