@@ -5,3 +5,5 @@ coverage
 coveralls
 nose
 lxml
+python-dateutil
+git+https://github.com/alastair/python-musicbrainzngs#egg=musicbrainzngs
