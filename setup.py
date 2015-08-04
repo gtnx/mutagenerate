@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, print_function
+
 from distutils.core import setup
 from setuptools import find_packages
 
+from mutagenerate import __version__ as mutagenerate_version
+
 setup(
     name='mutagenerate',
-    version='0.1.7',
+    version='.'.join(map(str, mutagenerate_version)),
     author='Guillaume Thomas',
     author_email='guillaume.thomas642@gmail.com',
     license='LICENCE.txt',
