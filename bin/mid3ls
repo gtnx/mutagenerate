@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, print_function
+
+import hashlib
+import unicodedata
+import os
+import argparse
+import mutagen
+from mutagen.id3 import ID3
+from mutagenerate.util import format_rows_output
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('paths', nargs='+')
+parser.add_argument('-s', '--sort', dest='sort', choices=('a', 'A', 't', 'g', 'y', 'T', 'c', 'f'), default='f')
+parser.add_argument('--genre', dest='genre')
+args = parser.parse_args()
+
+sort_keys = {
+    'a': 'artist',
+    'A': 'album',
+    't': 'title',
+    'g': 'genre',
+    'c': 'cover',
+    'f': 'filename',
+    't': 'track',
+    'y': 'year'
+}
+
+
+def get_frame(id3, name):
+    if name.endswith(':'):
+        for key, value in id3.items():
+            if key.startswith(name):
+                return hashlib.md5(value.data).hexdigest()[:6]
+        return None
+    return unicode(id3.get(name).text[0]) if name in id3 else None
+
+
+def int_or_self(value):
+    try:
+        return int(value)
+    except:
+        return value
+
+
+def print_id3s(id3s, sort):
+    if id3s:
+        headers = ['filename'] + [key for key, _ in keys]
+        rows = [[elem[header] for header in headers] for elem in id3s]
+        rows = sorted(rows, key=lambda r: int_or_self(r[headers.index(sort_keys[sort])]))
+        rows = [headers] + rows
+        print(format_rows_output(rows))
+    print()
+
+
+def parse_id3(dirname, fn, id3s, args):
+    try:
+        id3 = ID3(os.path.join(dirname, fn))
+        obj = {
+            'filename': unicodedata.normalize('NFC', fn.decode('utf8'))
+        }
+        for key, frame in keys:
+            obj[key] = get_frame(id3, frame)
+        if not args.genre or unicode(obj['genre']) == args.genre:
+            id3s.append(obj)
+    except mutagen.id3._util.ID3NoHeaderError:
+        pass
+
+if __name__ == '__main__':
+    keys = (
+        ('artist', 'TPE1'),
+        ('album', 'TALB'),
+        ('title', 'TIT2'),
+        ('track', 'TRCK'),
+        ('genre', 'TCON'),
+        ('cover', 'APIC:'),
+        ('year', 'TDRC')
+    )
+    local_id3s = []
+    for path in args.paths:
+        if os.path.isdir(path):
+            for dirname, _, fns in os.walk(path):
+                id3s = []
+                for fn in fns:
+                    parse_id3(dirname, fn, id3s, args)
+                print('%s:' % dirname)
+                print_id3s(id3s, args.sort)
+        else:
+            parse_id3(os.path.dirname(path), os.path.basename(path), local_id3s, args)
+    print_id3s(local_id3s, args.sort)
