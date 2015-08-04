@@ -21,5 +21,5 @@ setup(
     ),
     include_package_data=True,
     packages=find_packages(),
-    scripts=('bin/mid3generate.py', ),
+    scripts=('bin/mid3generate.py', 'bin/mid3ls', 'bin/mid3cover'),
 )
