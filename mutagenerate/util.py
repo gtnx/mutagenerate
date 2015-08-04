@@ -72,3 +72,10 @@ def format_rows_output(rows):
     cols = zip(*rows)
     col_widths = [max(len(unicode(value)) for value in col) for col in cols]
     return '\n'.join([' | '.join([('%%%ds' % col_widths[i]) % unicode(value) for i, value in enumerate(row)]) for row in rows])
+
+
+def int_or_self(value):
+    try:
+        return int(value)
+    except:
+        return value

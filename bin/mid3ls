@@ -9,24 +9,31 @@ import os
 import argparse
 import mutagen
 from mutagen.id3 import ID3
-from mutagenerate.util import format_rows_output
+from mutagenerate.util import format_rows_output, int_or_self
+
+from collections import namedtuple
+
+Header = namedtuple('Header', ['name', 'mutagen_key', 'filterable', 'frame'])
+headers = [
+    Header('filename', 'f', False, None),
+    Header('artist', 'a', True, 'TPE1'),
+    Header('album', 'A', True, 'TALB'),
+    Header('title', 't', True, 'TIT2'),
+    Header('track', 't', True, 'TRCK'),
+    Header('year', 'y', True, 'TDRC'),
+    Header('genre', 'g', True, 'TCON'),
+    Header('cover', 'c', False, 'APIC:'),
+]
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('paths', nargs='+')
 parser.add_argument('-s', '--sort', dest='sort', choices=('a', 'A', 't', 'g', 'y', 'T', 'c', 'f'), default='f')
-parser.add_argument('--genre', dest='genre')
+for h in headers:
+    if h.filterable:
+        parser.add_argument('--%s' % h.name, dest=h.name)
 args = parser.parse_args()
 
-sort_keys = {
-    'a': 'artist',
-    'A': 'album',
-    't': 'title',
-    'g': 'genre',
-    'c': 'cover',
-    'f': 'filename',
-    't': 'track',
-    'y': 'year'
-}
+sort_keys = {h.mutagen_key: h.name for h in headers}
 
 
 def get_frame(id3, name):
@@ -38,19 +45,12 @@ def get_frame(id3, name):
     return unicode(id3.get(name).text[0]) if name in id3 else None
 
 
-def int_or_self(value):
-    try:
-        return int(value)
-    except:
-        return value
-
-
 def print_id3s(id3s, sort):
     if id3s:
-        headers = ['filename'] + [key for key, _ in keys]
-        rows = [[elem[header] for header in headers] for elem in id3s]
-        rows = sorted(rows, key=lambda r: int_or_self(r[headers.index(sort_keys[sort])]))
-        rows = [headers] + rows
+        cols = [h.name for h in headers]
+        rows = [[elem[col] for col in cols] for elem in id3s]
+        rows = sorted(rows, key=lambda r: int_or_self(r[cols.index(sort_keys[sort])]))
+        rows = [cols] + rows
         print(format_rows_output(rows))
     print()
 
@@ -61,23 +61,15 @@ def parse_id3(dirname, fn, id3s, args):
         obj = {
             'filename': unicodedata.normalize('NFC', fn.decode('utf8'))
         }
-        for key, frame in keys:
-            obj[key] = get_frame(id3, frame)
+        for h in headers:
+            if h.frame:
+                obj[h.name] = get_frame(id3, h.frame)
         if not args.genre or unicode(obj['genre']) == args.genre:
             id3s.append(obj)
     except mutagen.id3._util.ID3NoHeaderError:
         pass
 
 if __name__ == '__main__':
-    keys = (
-        ('artist', 'TPE1'),
-        ('album', 'TALB'),
-        ('title', 'TIT2'),
-        ('track', 'TRCK'),
-        ('genre', 'TCON'),
-        ('cover', 'APIC:'),
-        ('year', 'TDRC')
-    )
     local_id3s = []
     for path in args.paths:
         if os.path.isdir(path):
