@@ -15,7 +15,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--cache', dest='cache', default='', help='cache')
 parser.add_argument('--update', dest='update', default=False, action='store_true', help='Update existing frames')
-parser.add_argument('--yes', dest='yes', default=False, action="store_true", help='Say yes to saving')
+parser.add_argument('-y', '--yes', dest='yes', default=False, action="store_true", help='Say yes to saving')
 parser.add_argument('--source', dest='sources', choices=('amazon', 'musicbrainz'), action='append', help='Comma separated list of sources')
 group = parser.add_argument_group('MusicBrainz', 'Options for MusicBrainz')
 group.add_argument('--musicbrainz-user', dest='musicbrainz_user', default='')
