@@ -9,7 +9,8 @@ import os
 import argparse
 import mutagen
 from mutagen.id3 import ID3
-from mutagenerate.util import format_rows_output, int_or_self
+from mutagen.mp3 import MP3
+from mutagenerate.util import format_rows_output, int_or_self, print_length
 
 from collections import namedtuple
 
@@ -22,6 +23,7 @@ headers = [
     Header('track', 't', True, 'TRCK'),
     Header('year', 'y', True, 'TDRC'),
     Header('genre', 'g', True, 'TCON'),
+    Header('length', 'l', False, None),
     Header('cover', 'c', False, 'APIC:'),
 ]
 
@@ -64,8 +66,13 @@ def parse_id3(dirname, fn, id3s, args):
         for h in headers:
             if h.frame:
                 obj[h.name] = get_frame(id3, h.frame)
-        if not args.genre or unicode(obj['genre']) == args.genre:
-            id3s.append(obj)
+        if args.genre and unicode(obj['genre']) != args.genre:
+            return
+        if args.artist and unicode(obj['artist']) != args.artist:
+            return
+        mp3 = MP3(os.path.join(dirname, fn))
+        obj['length'] = print_length(mp3.info.length)
+        id3s.append(obj)
     except mutagen.id3._util.ID3NoHeaderError:
         pass
 
