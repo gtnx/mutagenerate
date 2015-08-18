@@ -100,7 +100,7 @@ class MusicBrainzSource(Source):
         args = {'artist': artist, 'recording': title, 'limit': self.limit}
         logger.debug('Searching with args=%s' % args)
         recordings = musicbrainzngs.search_recordings(**args)
-        logger.debug(json.dumps(recordings))
+        # logger.debug(json.dumps(recordings))
         releases = [(recording, release) for recording in recordings['recording-list'] for release in recording.get('release-list', [])]
         if not releases:
             logger.warning('No releases found for %(artist)s - %(title)s' % locals())

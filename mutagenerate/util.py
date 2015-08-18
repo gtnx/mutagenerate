@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import, division, print_function
 
 import os
 import sys
@@ -79,3 +79,7 @@ def int_or_self(value):
         return int(value)
     except:
         return value
+
+
+def print_length(length):
+    return '%.2d:%.2d' % (length // 60, length % 60)

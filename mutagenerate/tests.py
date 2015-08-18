@@ -35,3 +35,9 @@ class UtilTestCase(unittest.TestCase):
         self.assertTrue(util.query_yes_no('', 'no'))
         util.raw_input = return_empty
         self.assertTrue(util.query_yes_no('', 'yes'))
+
+    def test_print_length(self):
+        self.assertEqual(util.print_length(0), '00:00')
+        self.assertEqual(util.print_length(1), '00:01')
+        self.assertEqual(util.print_length(60), '01:00')
+        self.assertEqual(util.print_length(305), '05:05')
